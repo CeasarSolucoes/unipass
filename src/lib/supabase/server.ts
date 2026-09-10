@@ -15,25 +15,21 @@ export async function createClient() {
   const cookieStore = await cookies();
   const env = publicEnv();
 
-  return createServerClient<Database>(
-    env.NEXT_PUBLIC_SUPABASE_URL,
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            for (const { name, value, options } of cookiesToSet) {
-              cookieStore.set(name, value, options);
-            }
-          } catch {
-            // Server Component não pode escrever cookie. O middleware já
-            // renovou a sessão, então ignorar aqui é seguro.
+  return createServerClient<Database>(env.url, env.publishableKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
+      },
+      setAll(cookiesToSet) {
+        try {
+          for (const { name, value, options } of cookiesToSet) {
+            cookieStore.set(name, value, options);
           }
-        },
+        } catch {
+          // Server Component não pode escrever cookie. O middleware já
+          // renovou a sessão, então ignorar aqui é seguro.
+        }
       },
     },
-  );
+  });
 }

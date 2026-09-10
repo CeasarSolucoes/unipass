@@ -17,7 +17,8 @@ config({ path: ".env.local", quiet: true });
 config({ path: ".env", quiet: true });
 
 const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 const ok = (m, extra = "") => console.log(`  ok    ${m}${extra ? ` — ${extra}` : ""}`);
 const bad = (m, extra = "") => console.log(`  FALHA ${m}${extra ? ` — ${extra}` : ""}`);
@@ -32,7 +33,7 @@ if (!URL || !KEY) {
   process.exit(1);
 }
 ok("NEXT_PUBLIC_SUPABASE_URL", URL);
-ok("NEXT_PUBLIC_SUPABASE_ANON_KEY", `${KEY.slice(0, 18)}…`);
+ok("chave publicável", `${KEY.slice(0, 20)}…`);
 
 const supabase = createClient(URL, KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
@@ -40,7 +41,11 @@ const supabase = createClient(URL, KEY, {
 
 console.log("\n2. Conectividade");
 try {
-  const res = await fetch(`${URL}/rest/v1/`, { headers: { apikey: KEY } });
+  // Consulta uma tabela real: a raiz /rest/v1/ devolve a spec OpenAPI e é
+  // restrita por padrão, então um 401 ali não diz nada sobre a conexão.
+  const res = await fetch(`${URL}/rest/v1/schools?select=id&limit=1`, {
+    headers: { apikey: KEY },
+  });
   if (res.ok) ok("endpoint REST responde", `HTTP ${res.status}`);
   else {
     bad("endpoint REST recusou", `HTTP ${res.status}`);

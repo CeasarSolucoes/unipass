@@ -68,9 +68,17 @@ declare
   u jsonb;
 begin
   for u in select * from jsonb_array_elements(users) loop
+    -- As colunas de token precisam ser '' e NUNCA NULL: o GoTrue as lê como
+    -- `string` em Go, e um NULL quebra o scan da linha com o erro genérico
+    -- "Database error querying schema" no login. Quem entra pela API de signup
+    -- não passa por isso porque o próprio GoTrue grava ''; só INSERT manual
+    -- como este cai na armadilha.
     insert into auth.users (
       instance_id, id, aud, role, email, encrypted_password,
       email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+      confirmation_token, recovery_token, email_change,
+      email_change_token_new, email_change_token_current,
+      phone_change, phone_change_token, reauthentication_token,
       created_at, updated_at
     ) values (
       '00000000-0000-0000-0000-000000000000',
@@ -82,6 +90,7 @@ begin
       now(),
       '{"provider":"email","providers":["email"]}'::jsonb,
       '{}'::jsonb,
+      '', '', '', '', '', '', '', '',
       now(), now()
     )
     on conflict (id) do nothing;

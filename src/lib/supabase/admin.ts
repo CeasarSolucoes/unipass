@@ -21,7 +21,7 @@ export function createAdminClient() {
   const pub = publicEnv();
   const srv = serverEnv();
 
-  return createSupabaseClient<Database>(pub.NEXT_PUBLIC_SUPABASE_URL, srv.SUPABASE_SERVICE_ROLE_KEY, {
+  return createSupabaseClient<Database>(pub.url, srv.secretKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 }

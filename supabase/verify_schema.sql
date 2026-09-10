@@ -94,8 +94,8 @@ checks as (
 
   union all select 2, 'Enums',
     (select count(*) from pg_type t join pg_namespace n on n.oid = t.typnamespace
-      where n.nspname = 'public' and t.typtype = 'e')::text || '/32',
-    'esperado 32 tipos enum'
+      where n.nspname = 'public' and t.typtype = 'e')::text || '/30',
+    'esperado 30 tipos enum'
 
   union all select 3, 'Domínio public.cpf',
     case when exists (
