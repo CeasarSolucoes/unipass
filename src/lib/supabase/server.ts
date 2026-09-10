@@ -8,8 +8,12 @@ import type { Database } from "@/types/database";
  * Opera sob a RLS do usuário logado — é o caminho padrão.
  */
 export async function createClient() {
-  const env = publicEnv();
+  // cookies() ANTES de qualquer validação: é a chamada que marca a rota como
+  // dinâmica. Se `publicEnv()` lançasse primeiro, o Next tentaria pré-renderizar
+  // a página no build e o erro apareceria como falha de prerender, escondendo
+  // a causa real.
   const cookieStore = await cookies();
+  const env = publicEnv();
 
   return createServerClient<Database>(
     env.NEXT_PUBLIC_SUPABASE_URL,
