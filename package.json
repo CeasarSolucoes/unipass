@@ -17,7 +17,8 @@
     "db:types": "supabase gen types typescript --local > src/types/database.ts",
     "db:reset": "supabase db reset",
     "db:push": "supabase db push",
-    "verify": "npm run typecheck && npm run lint && npm run test"
+    "verify": "npm run typecheck && npm run lint && npm run test",
+    "db:check": "node scripts/check-supabase.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",
