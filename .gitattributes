@@ -1,0 +1,12 @@
+# Normaliza fim de linha: LF no repositório, nativo no working tree.
+# Sem isto, um commit feito no Windows aparece como "arquivo inteiro alterado"
+# para quem estiver no Linux ou no CI.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
