@@ -16,8 +16,20 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
  */
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const ANON_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const configured = Boolean(SUPABASE_URL && ANON_KEY);
+
+// Um teste de segurança que pula em silêncio é pior que um que falha: ele
+// devolve suíte verde sem ter verificado nada. Se estes 14 casos forem pulados,
+// isso precisa aparecer no terminal.
+if (!configured) {
+  console.warn(
+    "\n⚠️  RLS · isolamento entre tenants — 14 casos PULADOS.\n" +
+      "   Faltam NEXT_PUBLIC_SUPABASE_URL e/ou a chave publicável em .env.local.\n" +
+      "   A suíte fica verde sem ter provado isolamento nenhum.\n",
+  );
+}
 
 const PASSWORD = "unipass-dev-2026";
 
