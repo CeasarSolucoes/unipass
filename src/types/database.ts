@@ -142,6 +142,8 @@ export type Database = {
           full_name: string;
           cpf: string;
           birth_date: string;
+          email: string | null;
+          phone: string | null;
           photo_url: string | null;
           photo_status: E["photo_status"];
           photo_rejection_reason: string | null;
@@ -157,6 +159,8 @@ export type Database = {
         // member_code é gerado por trigger — nunca é enviado pelo cliente.
         "id" | "member_code" | Stamps,
         | "profile_id"
+        | "email"
+        | "phone"
         | "photo_url"
         | "photo_status"
         | "photo_rejection_reason"
